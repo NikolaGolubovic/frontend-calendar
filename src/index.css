@@ -1,13 +1,243 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid gray;
+  width: 50%;
+  margin: 0 auto;
+}
+
+/* HEADER */
+
+.nav {
+  display: flex;
+  height: 50px;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.nav * {
+  margin-left: 10px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.register form label {
+  cursor: auto;
+}
+
+.nav p {
+  text-align: center;
+}
+
+.signup-form, .signup-form label {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.signup-form {
+  position: absolute;
+  top: 50px;
+  right: 0;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  right: 0;
+}
+
+.login-form label {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.login-form label input {
+  margin: 10px 0;
+}
+
+/* CALENDAR */
+
+.show-year, .show-month {
+  border-bottom: 1px solid salmon;
+  display: flex;
+  justify-content: center;
+}
+
+.days-names {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding: 5px 10px;
+  min-height: 30px;
+  justify-items: start;
+}
+
+.dates {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: 100px;
+}
+
+.date {
+  border: 1px solid silver;
+  min-height: 80px;
+  padding: 5px;
+}
+
+.events {
+  justify-content: flex-start;
+  align-items: flex-end;
+  margin-top: -10px;
+  width: 100px;
+}
+
+.single-event {
+  font-size: 0.8em;
+  height: 20px;
+  border: none;
+  margin-top: 10px;
+}
+
+.single-event p {
+  width: 80px;
+  border: none;
+  cursor: pointer;
+}
+
+/* MODAL */
+
+.modal-container {
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.modal-controller {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: start;
+  position: relative;
+  top: -50px;
+  width: 50%;
+  height: 30vh;
+}
+
+.modal-controller label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.modal-controller label input {
+  padding: 3px 10px;
+}
+
+.modal-close {
+  position: absolute;
+  right: 0;
+  top: 0;
+  border: none;
+  background: transparent;
+  font-size: 2em;
+  color: maroon;
+}
+
+/* EDIT MODAL */
+
+.modal-edit-container {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  align-items: center;
+}
+
+.modal-edit-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  position: relative;
+}
+
+.modal-edit-form * {
+  margin-bottom: 10px;
+}
+
+.modal-edit-form label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-edit-form label input {
+  padding: 5px;
+  border: 1px solid silver;
+  font-size: 1.5em;
+}
+
+.modal-edit-close-button {
+  border: none;
+  background: transparent;
+  font-size: 2em;
+  color: red;
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.modal-edit-close-button:hover {
+  color: rgba(180, 9, 9, 0.9);
+}
+
+.delete-event-button, button.confirm-edit {
+  max-width: 150px;
+  border: none;
+  background: rgb(226, 19, 19);
+  color: white;
+  padding: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+button.confirm-edit {
+  background: green;
+}
+
+.delete-event-button {
+  padding: 20px 50px;
+}
+
+.delete-event-button:hover {
+  background: rgb(226, 19, 19, 0.9);
+}
+
+button.confirm-edit {
+  background: rgba(0, 128, 0, 0.9);
 }
