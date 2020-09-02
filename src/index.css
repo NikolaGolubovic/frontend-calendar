@@ -1,24 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+:root {
+  --main-bg-color: snow;
+  --main-color: black;
+  --secondary-color: maroon;
+  --border-color: silver;
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Roboto', sans-serif;
+  background: var(--main-bg-color);
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-.calendar-container {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid gray;
-  width: 50%;
-  margin: 0 auto;
+.date::-webkit-scrollbar {
+  width: 0.3em;
+  height: 0px;
+}
+
+.date::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+.date::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
 }
 
 /* HEADER */
@@ -28,10 +41,11 @@ code {
   height: 50px;
   justify-content: flex-end;
   position: relative;
+  color: var(--main-color);
 }
 
 .nav * {
-  margin-left: 10px;
+  margin-left: 5px;
   margin-right: 5px;
   cursor: pointer;
 }
@@ -75,18 +89,50 @@ code {
 
 /* CALENDAR */
 
-.show-year, .show-month {
-  border-bottom: 1px solid salmon;
+.calendar-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  width: 30%;
+  height: 50vh;
+  margin: 0 auto;
+  color: var(--main-color);
+}
+
+.controller-and-info-month {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr 15fr 1fr;
+  padding: 10px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.choose-month {
+  width: 150px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 3px;
+  padding: 5px;
+  cursor: pointer;
+}
+
+[class$="awesome"] {
+  cursor: pointer;
+  color: var(--secondary-color);
+}
+
+.arrow[class$="awesome"] {
+  font-size: 2em;
 }
 
 .days-names {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  padding: 5px 10px;
   min-height: 30px;
-  justify-items: start;
+  justify-items: center;
+  align-content: center;
+  font-size: 0.8em;
+  width: 100%;
 }
 
 .dates {
@@ -96,9 +142,10 @@ code {
 }
 
 .date {
-  border: 1px solid silver;
+  border: 1px solid var(--border-color);
   min-height: 80px;
   padding: 5px;
+  overflow: auto;
 }
 
 .events {
@@ -112,10 +159,11 @@ code {
   font-size: 0.8em;
   height: 20px;
   border: none;
-  margin-top: 10px;
+  margin-top: 7px;
+  cursor: pointer;
 }
 
-.single-event p {
+.single-event small {
   width: 80px;
   border: none;
   cursor: pointer;
@@ -130,7 +178,8 @@ code {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--main-bg-color);
+  color: var(--main-color)
 }
 
 .modal-controller {
@@ -163,7 +212,13 @@ code {
   border: none;
   background: transparent;
   font-size: 2em;
-  color: maroon;
+  color: var(--secondary-color);
+}
+
+.btn-create {
+  border: none;
+  padding: 5px 15px;
+  cursor: pointer;
 }
 
 /* EDIT MODAL */
@@ -216,7 +271,6 @@ code {
 }
 
 .delete-event-button, button.confirm-edit {
-  max-width: 150px;
   border: none;
   background: rgb(226, 19, 19);
   color: white;
@@ -231,7 +285,7 @@ button.confirm-edit {
 }
 
 .delete-event-button {
-  padding: 20px 50px;
+  padding: 20px 150px;
 }
 
 .delete-event-button:hover {
@@ -240,4 +294,39 @@ button.confirm-edit {
 
 button.confirm-edit {
   background: rgba(0, 128, 0, 0.9);
+}
+
+.label-choose-month {
+  display: flex;
+  flex-direction: column;
+  max-width: 200px;
+  margin-top: 10px;
+}
+
+@media (max-width: 1920px) {
+  .calendar-container {
+    width: 50%;
+  }
+}
+
+@media (max-width: 1366px) {
+  .calendar-container {
+    width: 70%;
+  }
+}
+
+@media (max-width: 768px) {
+  .calendar-container {
+    width: 80%;
+  }
+  .date::-webkit-scrollbar {
+    width: 0.3em;
+    height: 3px;
+  }
+}
+
+@media (max-width: 600px) {
+  .calendar-container {
+    width: 95%;
+  }
 }

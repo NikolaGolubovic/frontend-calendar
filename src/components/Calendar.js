@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faArrowAltCircleLeft,
+  faArrowAltCircleRight,
+} from "@fortawesome/free-solid-svg-icons";
 
+import { newError } from "../reducers/notificationReducer";
 import Modal from "./Modal";
-import { daysInMonth, days, months } from "../utils/helper.js";
+import { daysInMonth, years, months, days } from "../utils/helper.js";
 
 function Calendar({ events, setEvents, user }) {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
@@ -9,6 +16,7 @@ function Calendar({ events, setEvents, user }) {
   const [firstDayMonth, setFirstDayMonth] = useState(0);
   const [daysOfCurrentMonth, setDaysOfCurrentMonth] = useState([]);
   const [modalOn, setModalOn] = useState(false);
+  const [modalDay, setModalDay] = useState(0);
   const [modalDate, setModalDate] = useState(0);
   const [modalMonth, setModalMonth] = useState(0);
   const [modalYear, setModalYear] = useState(0);
@@ -17,10 +25,24 @@ function Calendar({ events, setEvents, user }) {
   const [editEventTime, setEditEventTime] = useState("");
   const [eventKey, setEventKey] = useState("");
   const [eventId, setEventId] = useState(0);
+  const [optionsMonths, setOptionMonths] = useState([]);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     makeDates(currentMonth, currentYear);
   }, [currentMonth, currentYear]);
+
+  useEffect(() => {
+    const yearsMonth = [];
+    for (let i = 0; i < years.length; i++) {
+      for (let j = 0; j < months.length; j++) {
+        yearsMonth.push(`${years[i]} ${months[j]}`);
+      }
+    }
+    const thisMonth = new Date().getMonth();
+    setOptionMonths(yearsMonth.slice(thisMonth));
+  }, []);
 
   function makeDates(month, year) {
     const numOfDaysInMonth = daysInMonth(year, month);
@@ -69,6 +91,20 @@ function Calendar({ events, setEvents, user }) {
     setEventId(eventId);
   };
 
+  const handleOption = (e) => {
+    const yearMonth = e.target.value.split(" ");
+    let month = 0;
+    let year = +yearMonth[0];
+    for (let i = 0; i < months.length; i++) {
+      if (months[i] === yearMonth[1]) {
+        month = i;
+      }
+    }
+    setCurrentYear(year);
+    setCurrentMonth(month);
+    makeDates(year, month);
+  };
+
   return (
     <div>
       {modalOn && (
@@ -76,6 +112,7 @@ function Calendar({ events, setEvents, user }) {
           events={events}
           setEvents={setEvents}
           setModalOn={setModalOn}
+          modalDay={modalDay}
           modalDate={modalDate}
           modalMonth={modalMonth}
           modalYear={modalYear}
@@ -88,11 +125,28 @@ function Calendar({ events, setEvents, user }) {
         />
       )}
 
-      <button onClick={previousMonth}>Back</button>
-      <button onClick={nextMonth}>Next</button>
+      {/* <select name="" id="" onChange={changeTheme}>
+        <option value=""></option>
+        <option value={themes.testRed}>red</option>
+        <option value={themes.nightTheme}>Night</option>
+      </select> */}
+
       <div className="calendar-container">
-        <div className="show-year">{currentYear}</div>
-        <div className="show-month">{months[currentMonth]}</div>
+        <div className="controller-and-info-month">
+          <div onClick={previousMonth} className="button-left">
+            <FontAwesomeIcon
+              className="arrow font-awesome"
+              icon={faArrowAltCircleLeft}
+            />{" "}
+          </div>
+          {months[currentMonth]} {currentYear}
+          <div onClick={nextMonth} className="button-right">
+            <FontAwesomeIcon
+              className="arrow font-awesome"
+              icon={faArrowAltCircleRight}
+            />{" "}
+          </div>
+        </div>
         <div className="days-names">
           {days.map((day) => {
             return (
@@ -106,7 +160,12 @@ function Calendar({ events, setEvents, user }) {
           {daysOfCurrentMonth.length > 0 &&
             daysOfCurrentMonth.map((day, index) => {
               let dateKey =
-                "" + day + (index + 1 - firstDayMonth) + currentYear;
+                "" +
+                day +
+                (index + 1 - firstDayMonth) +
+                currentMonth +
+                currentYear;
+
               return (
                 <div
                   className="date"
@@ -116,18 +175,21 @@ function Calendar({ events, setEvents, user }) {
                     day && user
                       ? () => {
                           setModalOn(true);
-                          setModalDate(day);
-                          setModalMonth(index + 1 - firstDayMonth);
+                          setModalDay(day);
+                          setModalDate(index + 1 - firstDayMonth);
+                          setModalMonth(currentMonth);
                           setModalYear(currentYear);
                         }
                       : () => {
-                          console.log("nece moci");
+                          dispatch(
+                            newError("Invalid action, be careful with clicking")
+                          );
                         }
                   }
                 >
-                  {day && index + 1 - firstDayMonth}
+                  <small>{day && index + 1 - firstDayMonth}</small>
                   {events.map((event) => {
-                    return event["date_key"] == dateKey ? (
+                    return event["date_key"] === dateKey ? (
                       <div
                         className="events"
                         key={event["id"] + dateKey}
@@ -136,7 +198,7 @@ function Calendar({ events, setEvents, user }) {
                         }}
                       >
                         <div className="single-event">
-                          <p
+                          <small
                             onClick={() =>
                               getEditModal(
                                 event["event_text"],
@@ -147,7 +209,7 @@ function Calendar({ events, setEvents, user }) {
                             }
                           >
                             {event["event_text"]} {event["event_time"]}h
-                          </p>
+                          </small>
                         </div>
                       </div>
                     ) : (
@@ -158,6 +220,23 @@ function Calendar({ events, setEvents, user }) {
               );
             })}
         </div>
+        <label className="label-choose-month">
+          Chooose Month
+          <select
+            name=""
+            id=""
+            onChange={handleOption}
+            className="choose-month"
+          >
+            {optionsMonths.map((month) => {
+              return (
+                <option key={month} value={month}>
+                  {month}
+                </option>
+              );
+            })}
+          </select>
+        </label>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWindowClose } from "@fortawesome/free-solid-svg-icons";
 import eventsService from "../services/eventsService";
@@ -7,6 +8,7 @@ function Modal({
   setModalOn,
   setEvents,
   events,
+  modalDay,
   modalDate,
   modalMonth,
   modalYear,
@@ -22,9 +24,12 @@ function Modal({
   const [editMsg, setEditMsg] = useState(editEventText);
   const [editTime, setEditTime] = useState(editEventTime);
 
-  async function createEvent(date, currentMonth, currentYear) {
+  const dispatch = useDispatch();
+
+  async function createEvent(day, date, currentMonth, currentYear) {
     const obj = {};
-    const dateKey = "" + date + currentMonth + currentYear;
+    const dateKey = "" + day + date + currentMonth + currentYear;
+    console.log("createEvent dateKey", dateKey);
     obj[dateKey] = eventMsg;
     obj["time"] = eventTime;
     const response = await eventsService.create({
@@ -45,7 +50,7 @@ function Modal({
     const { date_key, event_text, event_time, event_id } = response.event;
     setEvents(
       events.map((event) =>
-        event["date_key"] == date_key
+        event["date_key"] === date_key
           ? { event_text, event_time, id: event_id, date_key }
           : event
       )
@@ -57,7 +62,7 @@ function Modal({
       await eventsService.remove(eventId);
       setModalOn(false);
       setEditModal(false);
-      setEvents(events.filter((event) => event.id != eventId));
+      setEvents(events.filter((event) => event.id !== eventId));
     } catch (err) {
       console.log(err);
     }
@@ -67,8 +72,9 @@ function Modal({
       {!editModal ? (
         <form
           className="modal-controller"
-          onSubmit={() => {
-            createEvent(modalDate, modalMonth, modalYear);
+          onSubmit={(e) => {
+            e.preventDefault();
+            createEvent(modalDay, modalDate, modalMonth, modalYear);
             setModalOn(false);
           }}
         >
@@ -83,7 +89,7 @@ function Modal({
             <h3>Time When The Event Starts</h3>
             <input type="text" onChange={(e) => setEventTime(e.target.value)} />
           </label>
-          <button>Create</button>
+          <button className="btn-create">Create</button>
         </form>
       ) : (
         <div className="modal-edit-container">

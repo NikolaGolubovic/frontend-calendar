@@ -23,6 +23,11 @@ export const months = [
   "December",
 ];
 
+export const years = Array.from(
+  { length: 5 },
+  (_v, i) => new Date().getFullYear() + i
+);
+
 export function daysInMonth(year, month) {
   return 32 - new Date(year, month, 32).getDate();
 }

@@ -1,9 +1,21 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { newError } from "../reducers/notificationReducer";
+import {
+  faUser,
+  faSignOutAlt,
+  faSignInAlt,
+  faMoon,
+  faSun,
+} from "@fortawesome/free-solid-svg-icons";
+
+import { lightTheme, nightTheme } from "../utils/themes";
 
 import usersService from "../services/usersService";
 import loginService from "../services/loginService";
 
-function Header({ user, setUser, setEvents }) {
+function Header({ user, setUser, setEvents, theme, setTheme }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -13,6 +25,10 @@ function Header({ user, setUser, setEvents }) {
 
   const [signUpOn, setSignUpOn] = useState(false);
   const [loginOn, setLoginOn] = useState(false);
+
+  const [themeIcon, setThemeIcon] = useState(faSun);
+
+  const dispatch = useDispatch();
 
   const signUpStyle = {
     display: signUpOn ? "" : "none",
@@ -46,7 +62,7 @@ function Header({ user, setUser, setEvents }) {
       window.localStorage.setItem("loggedUser", data);
       window.location.reload();
     } catch (err) {
-      console.log(err);
+      dispatch(newError(err.response.data.msg));
     }
   };
 
@@ -56,8 +72,22 @@ function Header({ user, setUser, setEvents }) {
     setUser("");
   };
 
+  const changeTheme = () => {
+    themeIcon === faSun ? setThemeIcon(faMoon) : setThemeIcon(faSun);
+    theme === lightTheme ? setTheme(nightTheme) : setTheme(lightTheme);
+  };
+
   return (
     <nav className="nav">
+      <p>
+        <small>
+          <FontAwesomeIcon
+            className="font-awesome"
+            icon={themeIcon}
+            onClick={changeTheme}
+          />
+        </small>
+      </p>
       {!user ? (
         <>
           <div className="register">
@@ -67,7 +97,10 @@ function Header({ user, setUser, setEvents }) {
                 setLoginOn(false);
               }}
             >
-              Sign Up
+              <small>
+                Sign In{" "}
+                <FontAwesomeIcon className="font-awesome" icon={faUser} />
+              </small>
             </p>
             <form
               className="signup-form"
@@ -87,6 +120,7 @@ function Header({ user, setUser, setEvents }) {
                 <input
                   type="password"
                   value={password}
+                  autoComplete="off"
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </label>
@@ -95,6 +129,7 @@ function Header({ user, setUser, setEvents }) {
                 <input
                   type="password"
                   value={confirmPassword}
+                  autoComplete="off"
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
               </label>
@@ -108,9 +143,11 @@ function Header({ user, setUser, setEvents }) {
                 setSignUpOn(false);
               }}
             >
-              Sign In
+              <small>
+                Sign In{" "}
+                <FontAwesomeIcon className="font-awesome" icon={faSignInAlt} />
+              </small>
             </p>
-
             <form
               className="login-form"
               style={logInStyle}
@@ -129,6 +166,7 @@ function Header({ user, setUser, setEvents }) {
                 <input
                   type="password"
                   value={passwordLogin}
+                  autoComplete="on"
                   onChange={(e) => setPasswordLogin(e.target.value)}
                 />
               </label>
@@ -138,8 +176,17 @@ function Header({ user, setUser, setEvents }) {
         </>
       ) : (
         <div style={{ display: "flex" }}>
-          <h3>{user}</h3>
-          <h3 onClick={logOut}>Log Out</h3>
+          <p>
+            <small>
+              {user} <FontAwesomeIcon className="font-awesome" icon={faUser} />
+            </small>
+          </p>
+          <p onClick={logOut}>
+            <small>
+              Log Out{" "}
+              <FontAwesomeIcon className="font-awesome" icon={faSignOutAlt} />{" "}
+            </small>
+          </p>
         </div>
       )}
     </nav>
