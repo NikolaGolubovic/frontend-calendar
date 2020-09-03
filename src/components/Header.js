@@ -40,13 +40,39 @@ function Header({ user, setUser, setEvents, theme, setTheme }) {
 
   const createUser = async (e) => {
     e.preventDefault();
+    const errorsArr = [];
     try {
+      if (username.length < 3) {
+        errorsArr.push({
+          message: "Your Username is need to be at least 3 characters long",
+        });
+      }
+      if (password.length < 5) {
+        errorsArr.push({
+          message: "Your password is need to be at least 5 characters long",
+        });
+      }
+      if (password !== confirmPassword) {
+        errorsArr.push({ message: "Confirm your Password correctly" });
+      }
+      if (errorsArr.length !== 0) {
+        throw errorsArr;
+      }
       const res = await usersService.register({ username, password });
       const data = JSON.stringify(res);
       window.localStorage.setItem("loggedUser", data);
       window.location.reload();
-    } catch (err) {
-      console.log("error", err);
+    } catch (error) {
+      setSignUpOn(false);
+      // setUsername("");
+      // setPassword("");
+      // setConfirmPassword("");
+      if (Array.isArray(error)) {
+        error.forEach((err) => dispatch(newError(err.message)));
+        return;
+      }
+      console.log(error.response);
+      dispatch(newError(error.response.data.message));
     }
   };
 
@@ -57,11 +83,11 @@ function Header({ user, setUser, setEvents, theme, setTheme }) {
         username: usernameLogin,
         password: passwordLogin,
       });
-      console.log(res);
       const data = JSON.stringify(res);
       window.localStorage.setItem("loggedUser", data);
       window.location.reload();
     } catch (err) {
+      setLoginOn(false);
       dispatch(newError(err.response.data.msg));
     }
   };

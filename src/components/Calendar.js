@@ -181,9 +181,15 @@ function Calendar({ events, setEvents, user }) {
                           setModalYear(currentYear);
                         }
                       : () => {
-                          dispatch(
-                            newError("Invalid action, be careful with clicking")
-                          );
+                          if (!user) {
+                            dispatch(
+                              newError(
+                                "Invalid action, if you want to make event firstly you need to be Login!"
+                              )
+                            );
+                          } else {
+                            dispatch(newError("Be careful where you click!"));
+                          }
                         }
                   }
                 >

@@ -303,6 +303,14 @@ button.confirm-edit {
   margin-top: 10px;
 }
 
+.btn-notification {
+  height: 20px;
+  align-self: center;
+  cursor: pointer;
+  background: none;
+  color: red
+}
+
 @media (max-width: 1920px) {
   .calendar-container {
     width: 50%;

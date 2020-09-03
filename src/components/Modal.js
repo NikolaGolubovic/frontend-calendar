@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faWindowClose } from "@fortawesome/free-solid-svg-icons";
 import eventsService from "../services/eventsService";
+import { newError } from "../reducers/notificationReducer";
 
 function Modal({
   setModalOn,
@@ -27,17 +28,24 @@ function Modal({
   const dispatch = useDispatch();
 
   async function createEvent(day, date, currentMonth, currentYear) {
-    const obj = {};
-    const dateKey = "" + day + date + currentMonth + currentYear;
-    console.log("createEvent dateKey", dateKey);
-    obj[dateKey] = eventMsg;
-    obj["time"] = eventTime;
-    const response = await eventsService.create({
-      eventMsg,
-      eventTime,
-      dateKey,
-    });
-    setEvents(events.concat(response.event));
+    try {
+      if (eventTime < 0 || eventTime >= 24) {
+        throw new Error("Time must be between 0 and 24");
+      }
+      const obj = {};
+      const dateKey = "" + day + date + currentMonth + currentYear;
+      console.log("createEvent dateKey", dateKey);
+      obj[dateKey] = eventMsg;
+      obj["time"] = eventTime;
+      const response = await eventsService.create({
+        eventMsg,
+        eventTime,
+        dateKey,
+      });
+      setEvents(events.concat(response.event));
+    } catch (err) {
+      dispatch(newError(err.message));
+    }
   }
 
   const editEvent = async (content, id) => {
